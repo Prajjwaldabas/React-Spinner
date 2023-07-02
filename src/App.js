@@ -1,42 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 
 const App = () => {
+  const [count, setCount] = useState(0);
   const [spinning, setSpinning] = useState(false);
   const [result, setResult] = useState('');
-  const [rotation, setRotation] = useState(0);
 
-  console.log(spinning);
-
-  useEffect(() => {
-    if (spinning) {
-      setRotation((rotation) => rotation + 30);
-
-      setTimeout(() => {
-        const prizes = ['Try Again', 'Prize 1', 'Prize 2', 'Prize 3', 'Prize 4', 'Prize 5', 'Prize 6', 'Prize 7'];
-        const randomIndex = Math.floor(Math.random() * prizes.length);
-        const selectedPrize = prizes[randomIndex];
-        setResult(selectedPrize);
-        setSpinning(false);
-      }, 3000);
-    }
-  }, [spinning]);
+  const prizes = ['Try Again', 'Prize 1', 'Prize 2', 'Prize 3', 'Prize 4', 'Prize 5', 'Prize 6', 'Prize 7'];
 
   const spinWheel = () => {
-    if (!spinning) {
-      setResult('');
-      setRotation(0);
-      setTimeout(() => {
-        setSpinning(true);
-        setTimeout(() => {
-          const prizes = ['Try Again', 'Prize 1', 'Prize 2', 'Prize 3', 'Prize 4', 'Prize 5', 'Prize 6', 'Prize 7'];
-          const randomIndex = Math.floor(Math.random() * prizes.length);
-          const selectedPrize = prizes[randomIndex];
-          setResult(selectedPrize);
-          setSpinning(false);
-        }, 3000);
-      }, 100);
-    }
+    setResult('')
+    setSpinning(true);
+    setCount(count + 1);
+   
+    setTimeout(() => {
+      setSpinning(false);
+      setResult(count === 0 ? 'Try Again' : getRandomPrize());
+    }, 2000);
+  };
+  
+
+  const getRandomPrize = () => {
+    const randomIndex = Math.floor(Math.random() * (prizes.length - 1)) + 1;
+    return prizes[randomIndex];
   };
 
   return (
@@ -45,10 +31,13 @@ const App = () => {
         <h1>Spin the Wheel</h1>
       </header>
       <main>
-        <div className={`wheel ${spinning ? 'spinning' : ''}`} style={{ transform: `rotate(${rotation}deg)` }}>
+        <div className={`wheel ${spinning ? 'spinning' : ''}`}>
           <div className="overlay" />
+          <div className="wheel-container">
           <div className={`spinner ${spinning ? 'active' : ''}`} />
           <div className="wheel-text">{result}</div>
+          </div>
+       
         </div>
         <button className="spin-button" onClick={spinWheel} disabled={spinning}>
           {spinning ? 'Spinning...' : 'Spin'}
